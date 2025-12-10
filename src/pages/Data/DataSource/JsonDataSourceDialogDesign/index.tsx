@@ -194,6 +194,7 @@ export function JsonDataSourceDialogDesign() {
 
     // Validate current selection before switching
     if (!validateCurrentSelection()) {
+      setErrorToast("The operation failed: There are mandatory fields left unfilled. Please complete the required information or delete the incomplete items.")
       return // Prevent switching if validation fails
     }
 
@@ -240,6 +241,9 @@ export function JsonDataSourceDialogDesign() {
   }
 
   const [activeTab, setActiveTab] = useState<'setting' | 'preview'>('setting')
+
+  // Error toast state
+  const [errorToast, setErrorToast] = useState<string | null>(null)
 
   // Pre-Request Preview Dialog state
   const [preRequestPreviewOpen, setPreRequestPreviewOpen] = useState(false)
@@ -1299,6 +1303,22 @@ export function JsonDataSourceDialogDesign() {
         )}
       </div>
       </div>
+
+      {/* Error Toast */}
+      {errorToast && (
+        <div className="error-toast">
+          <div className="error-toast-icon">
+            <span className="error-check">✓</span>
+          </div>
+          <div className="error-toast-content">
+            <div className="error-toast-message">{errorToast}</div>
+            <div className="error-toast-actions">
+              <button className="error-toast-btn" onClick={() => setErrorToast(null)}>Show Details</button>
+              <button className="error-toast-btn" onClick={() => setErrorToast(null)}>Dismiss</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <div className="dialog-footer">

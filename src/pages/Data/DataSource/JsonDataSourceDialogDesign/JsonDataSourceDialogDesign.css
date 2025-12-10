@@ -351,7 +351,7 @@
 }
 
 .row-action-item.delete {
-  color: #e74c3c;
+  color: #333;
 }
 
 .row-action-icon {
@@ -1119,4 +1119,71 @@
 
 .preview-request-table tbody tr:nth-child(even) {
   background-color: #fff;
+}
+
+/* Error Toast */
+.error-toast {
+  display: flex;
+  align-items: stretch;
+  background-color: #F1450C;
+  border-radius: 100px;
+  overflow: hidden;
+  width: 500px;
+  margin: 0 auto 16px auto;
+}
+
+.error-toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 100px 0 0 100px;
+}
+
+.error-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.error-toast-content {
+  flex: 1;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.error-toast-message {
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.error-toast-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.error-toast-btn {
+  background-color: rgba(0, 0, 0, 0.2);
+  border: none;
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.error-toast-btn:hover {
+  background-color: rgba(0, 0, 0, 0.3);
 }
