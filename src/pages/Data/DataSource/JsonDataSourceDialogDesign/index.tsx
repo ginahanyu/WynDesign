@@ -1,5 +1,11 @@
 import { useState } from 'react'
 import './JsonDataSourceDialogDesign.css'
+import deleteIcon from '@/resource/delete.png'
+import filterIcon from '@/resource/filter.svg'
+import validateAllIcon from '@/resource/validateAll.png'
+import duplicateIcon from '@/resource/duplicate.png'
+import dateIcon from '@/resource/date.svg'
+import booleanIcon from '@/resource/boolean.svg'
 
 interface PreRequest {
   name: string
@@ -122,12 +128,121 @@ export function JsonDataSourceDialogDesign() {
   const [selectedTable, setSelectedTable] = useState<'preRequest' | 'baseAddress' | 'endpoint'>('endpoint')
   const [selectedIndex, setSelectedIndex] = useState(0)
 
+  // Validation function for required fields
+  const validateCurrentSelection = (): boolean => {
+    if (selectedTable === 'preRequest') {
+      const current = preRequests[selectedIndex]
+      if (!current) return true
+      return !!(current.name && current.url)
+    }
+    if (selectedTable === 'baseAddress') {
+      const current = baseAddresses[selectedIndex]
+      if (!current) return true
+      return !!(current.name && current.url)
+    }
+    if (selectedTable === 'endpoint') {
+      const current = endpoints[selectedIndex]
+      if (!current) return true
+      return !!(current.name && current.apiUrl)
+    }
+    return true
+  }
+
+  // Check if specific field is invalid (empty required field)
+  const isFieldInvalid = (table: string, index: number, field: string): boolean => {
+    if (table === 'preRequest' && selectedTable === 'preRequest' && selectedIndex === index) {
+      const current = preRequests[index]
+      if (!current) return false
+      if (field === 'name') return !current.name
+      if (field === 'url') return !current.url
+    }
+    if (table === 'baseAddress' && selectedTable === 'baseAddress' && selectedIndex === index) {
+      const current = baseAddresses[index]
+      if (!current) return false
+      if (field === 'name') return !current.name
+      if (field === 'url') return !current.url
+    }
+    if (table === 'endpoint' && selectedTable === 'endpoint' && selectedIndex === index) {
+      const current = endpoints[index]
+      if (!current) return false
+      if (field === 'name') return !current.name
+      if (field === 'apiUrl') return !current.apiUrl
+    }
+    return false
+  }
+
+  // Get validation error message for a field
+  const getFieldErrorMessage = (table: string, field: string): string => {
+    if (table === 'preRequest') {
+      if (field === 'name') return "The name of the pre-request can not be empty, 'None' or 'All'"
+      if (field === 'url') return "The URL of the pre-request can not be empty"
+    }
+    if (table === 'baseAddress') {
+      if (field === 'name') return "The name of the base address can not be empty, 'None' or 'All'"
+      if (field === 'url') return "The URL of the base address can not be empty"
+    }
+    if (table === 'endpoint') {
+      if (field === 'name') return "The name of the endpoint can not be empty, 'None' or 'All'"
+      if (field === 'apiUrl') return "The API URL of the endpoint can not be empty"
+    }
+    return ""
+  }
+
   const handleRowSelect = (table: 'preRequest' | 'baseAddress' | 'endpoint', index: number) => {
+    // If selecting the same row, do nothing
+    if (table === selectedTable && index === selectedIndex) return
+
+    // Validate current selection before switching
+    if (!validateCurrentSelection()) {
+      return // Prevent switching if validation fails
+    }
+
     setSelectedTable(table)
     setSelectedIndex(index)
   }
 
+  const handleDeletePreRequest = (index: number) => {
+    const updated = preRequests.filter((_, i) => i !== index)
+    setPreRequests(updated)
+    if (selectedTable === 'preRequest' && selectedIndex >= updated.length) {
+      setSelectedIndex(Math.max(0, updated.length - 1))
+    }
+  }
+
+  // Endpoint action dropdown state
+  const [endpointActionDropdown, setEndpointActionDropdown] = useState<number | null>(null)
+
+  const handleEndpointMoreClick = (e: React.MouseEvent, index: number) => {
+    e.stopPropagation()
+    if (endpointActionDropdown === index) {
+      setEndpointActionDropdown(null)
+    } else {
+      setEndpointActionDropdown(index)
+    }
+  }
+
+  const handleDuplicateEndpoint = (index: number) => {
+    const original = endpoints[index]
+    const duplicated: Endpoint = { ...original, name: `${original.name}_copy` }
+    const updated = [...endpoints]
+    updated.splice(index + 1, 0, duplicated)
+    setEndpoints(updated)
+    setEndpointActionDropdown(null)
+  }
+
+  const handleDeleteEndpoint = (index: number) => {
+    const updated = endpoints.filter((_, i) => i !== index)
+    setEndpoints(updated)
+    setEndpointActionDropdown(null)
+    if (selectedTable === 'endpoint' && selectedIndex >= updated.length) {
+      setSelectedIndex(Math.max(0, updated.length - 1))
+    }
+  }
+
   const [activeTab, setActiveTab] = useState<'setting' | 'preview'>('setting')
+
+  // Pre-Request Preview Dialog state
+  const [preRequestPreviewOpen, setPreRequestPreviewOpen] = useState(false)
 
   // Right panel settings
   const [requestMethod, setRequestMethod] = useState('GET')
@@ -302,8 +417,15 @@ export function JsonDataSourceDialogDesign() {
                       <td>{item.name || <span className="empty-cell">-</span>}</td>
                       <td>{item.url || <span className="empty-cell">-</span>}</td>
                       <td className="action-cell">
-                        <button className="icon-btn small">⎘</button>
-                        <button className="icon-btn small">⋮</button>
+                        <button
+                          className="icon-btn small"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleDeletePreRequest(index)
+                          }}
+                        >
+                          <img src={deleteIcon} alt="Delete" className="action-icon" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -343,8 +465,9 @@ export function JsonDataSourceDialogDesign() {
                       <td>{item.name || <span className="empty-cell">-</span>}</td>
                       <td>{item.url || <span className="empty-cell">-</span>}</td>
                       <td className="action-cell">
-                        <button className="icon-btn small">✎</button>
-                        <button className="icon-btn small">🗑</button>
+                        <button className="icon-btn small">
+                          <img src={deleteIcon} alt="Delete" className="action-icon" />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -362,8 +485,8 @@ export function JsonDataSourceDialogDesign() {
             </div>
             <div className="section-divider" />
             <div className="section-actions">
-              <button className="icon-btn">▽</button>
-              <button className="icon-btn">☑</button>
+              <button className="icon-btn"><img src={filterIcon} alt="Filter" className="action-icon" /></button>
+              <button className="icon-btn"><img src={validateAllIcon} alt="Validate All" className="action-icon" /></button>
               <button className="icon-btn" onClick={handleAddEndpoint}>+</button>
               <span className={`section-arrow ${endpointExpanded ? 'expanded' : ''}`} />
             </div>
@@ -400,8 +523,38 @@ export function JsonDataSourceDialogDesign() {
                         )}
                       </td>
                       <td className="action-cell">
-                        <button className="icon-btn small">⎘</button>
-                        <button className="icon-btn small">⋮</button>
+                        <div className="row-action-wrapper">
+                          <button
+                            className="icon-btn small"
+                            onClick={(e) => handleEndpointMoreClick(e, index)}
+                          >
+                            ⋮
+                          </button>
+                          {endpointActionDropdown === index && (
+                            <div className="row-action-dropdown">
+                              <div
+                                className="row-action-item"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleDuplicateEndpoint(index)
+                                }}
+                              >
+                                <img src={duplicateIcon} alt="Duplicate" className="row-action-icon-img" />
+                                <span>Duplicate</span>
+                              </div>
+                              <div
+                                className="row-action-item delete"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleDeleteEndpoint(index)
+                                }}
+                              >
+                                <img src={deleteIcon} alt="Delete" className="row-action-icon-img" />
+                                <span>Delete</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -424,24 +577,34 @@ export function JsonDataSourceDialogDesign() {
                 {/* Name */}
                 <div className="form-row">
                   <label className="form-label required">Name</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={preRequests[selectedIndex]?.name || ''}
-                    onChange={(e) => updatePreRequest(selectedIndex, 'name', e.target.value)}
-                  />
+                  <div className="input-with-tooltip">
+                    <input
+                      type="text"
+                      className={`form-input ${isFieldInvalid('preRequest', selectedIndex, 'name') ? 'invalid' : ''}`}
+                      value={preRequests[selectedIndex]?.name || ''}
+                      onChange={(e) => updatePreRequest(selectedIndex, 'name', e.target.value)}
+                    />
+                    {isFieldInvalid('preRequest', selectedIndex, 'name') && (
+                      <div className="validation-tooltip">{getFieldErrorMessage('preRequest', 'name')}</div>
+                    )}
+                  </div>
                 </div>
 
                 {/* URL */}
                 <div className="form-row">
                   <label className="form-label required">URL</label>
                   <div className="form-control-with-icon">
-                    <input
-                      type="text"
-                      className="form-input"
-                      value={preRequests[selectedIndex]?.url || ''}
-                      onChange={(e) => updatePreRequest(selectedIndex, 'url', e.target.value)}
-                    />
+                    <div className="input-with-tooltip" style={{ flex: 1 }}>
+                      <input
+                        type="text"
+                        className={`form-input ${isFieldInvalid('preRequest', selectedIndex, 'url') ? 'invalid' : ''}`}
+                        value={preRequests[selectedIndex]?.url || ''}
+                        onChange={(e) => updatePreRequest(selectedIndex, 'url', e.target.value)}
+                      />
+                      {isFieldInvalid('preRequest', selectedIndex, 'url') && (
+                        <div className="validation-tooltip">{getFieldErrorMessage('preRequest', 'url')}</div>
+                      )}
+                    </div>
                     <button className="icon-btn setting-icon">⇄</button>
                   </div>
                 </div>
@@ -642,6 +805,44 @@ export function JsonDataSourceDialogDesign() {
                   </div>
                 )}
               </div>
+
+              {/* Action Buttons */}
+              <div className="action-buttons">
+                <button className="btn btn-primary" onClick={() => setPreRequestPreviewOpen(true)}>Preview</button>
+              </div>
+          </div>
+        )}
+
+        {/* Pre-Request Preview Dialog */}
+        {preRequestPreviewOpen && (
+          <div className="modal-overlay" onClick={() => setPreRequestPreviewOpen(false)}>
+            <div className="modal-dialog pre-request-preview-dialog" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <span className="modal-title">Preview Pre-Request</span>
+                <button className="modal-close-btn" onClick={() => setPreRequestPreviewOpen(false)}>×</button>
+              </div>
+              <div className="modal-body">
+                <table className="preview-request-table">
+                  <thead>
+                    <tr>
+                      <th>Pre-Request</th>
+                      <th>Variable Name</th>
+                      <th>Variable Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>user</td>
+                      <td>userId</td>
+                      <td>1</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-primary" onClick={() => setPreRequestPreviewOpen(false)}>OK</button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -655,24 +856,34 @@ export function JsonDataSourceDialogDesign() {
               {/* Name */}
               <div className="form-row">
                 <label className="form-label required">Name</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={baseAddresses[selectedIndex]?.name || ''}
-                  onChange={(e) => updateBaseAddress(selectedIndex, 'name', e.target.value)}
-                />
+                <div className="input-with-tooltip">
+                  <input
+                    type="text"
+                    className={`form-input ${isFieldInvalid('baseAddress', selectedIndex, 'name') ? 'invalid' : ''}`}
+                    value={baseAddresses[selectedIndex]?.name || ''}
+                    onChange={(e) => updateBaseAddress(selectedIndex, 'name', e.target.value)}
+                  />
+                  {isFieldInvalid('baseAddress', selectedIndex, 'name') && (
+                    <div className="validation-tooltip">{getFieldErrorMessage('baseAddress', 'name')}</div>
+                  )}
+                </div>
               </div>
 
               {/* URL */}
               <div className="form-row">
                 <label className="form-label required">URL</label>
                 <div className="form-control-with-icon">
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={baseAddresses[selectedIndex]?.url || ''}
-                    onChange={(e) => updateBaseAddress(selectedIndex, 'url', e.target.value)}
-                  />
+                  <div className="input-with-tooltip" style={{ flex: 1 }}>
+                    <input
+                      type="text"
+                      className={`form-input ${isFieldInvalid('baseAddress', selectedIndex, 'url') ? 'invalid' : ''}`}
+                      value={baseAddresses[selectedIndex]?.url || ''}
+                      onChange={(e) => updateBaseAddress(selectedIndex, 'url', e.target.value)}
+                    />
+                    {isFieldInvalid('baseAddress', selectedIndex, 'url') && (
+                      <div className="validation-tooltip">{getFieldErrorMessage('baseAddress', 'url')}</div>
+                    )}
+                  </div>
                   <button className="icon-btn setting-icon">⇄</button>
                 </div>
               </div>
@@ -829,12 +1040,17 @@ export function JsonDataSourceDialogDesign() {
                 {/* Name */}
                 <div className="form-row">
                   <label className="form-label required">Name</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={endpoints[selectedIndex]?.name || ''}
-                    onChange={(e) => updateEndpoint(selectedIndex, 'name', e.target.value)}
-                  />
+                  <div className="input-with-tooltip">
+                    <input
+                      type="text"
+                      className={`form-input ${isFieldInvalid('endpoint', selectedIndex, 'name') ? 'invalid' : ''}`}
+                      value={endpoints[selectedIndex]?.name || ''}
+                      onChange={(e) => updateEndpoint(selectedIndex, 'name', e.target.value)}
+                    />
+                    {isFieldInvalid('endpoint', selectedIndex, 'name') && (
+                      <div className="validation-tooltip">{getFieldErrorMessage('endpoint', 'name')}</div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Base Address */}
@@ -851,12 +1067,17 @@ export function JsonDataSourceDialogDesign() {
                 {/* API Url */}
                 <div className="form-row">
                   <label className="form-label required">API Url</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={endpoints[selectedIndex]?.apiUrl || ''}
-                    onChange={(e) => updateEndpoint(selectedIndex, 'apiUrl', e.target.value)}
-                  />
+                  <div className="input-with-tooltip">
+                    <input
+                      type="text"
+                      className={`form-input ${isFieldInvalid('endpoint', selectedIndex, 'apiUrl') ? 'invalid' : ''}`}
+                      value={endpoints[selectedIndex]?.apiUrl || ''}
+                      onChange={(e) => updateEndpoint(selectedIndex, 'apiUrl', e.target.value)}
+                    />
+                    {isFieldInvalid('endpoint', selectedIndex, 'apiUrl') && (
+                      <div className="validation-tooltip">{getFieldErrorMessage('endpoint', 'apiUrl')}</div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Request Method */}
@@ -996,10 +1217,16 @@ export function JsonDataSourceDialogDesign() {
                               className="column-type-selector"
                               onClick={() => setOpenDropdown(openDropdown === col.key ? null : col.key)}
                             >
-                              <span className={`column-type-icon ${col.type.toLowerCase()}`}>
-                                {columnTypeIcons[col.type]}
-                              </span>
-                              <span className="column-type-arrow">▼</span>
+                              {(col.type === 'Date' || col.type === 'DateTime') ? (
+                                <img src={dateIcon} alt={col.type} className="column-type-icon-img" />
+                              ) : col.type === 'Boolean' ? (
+                                <img src={booleanIcon} alt="Boolean" className="column-type-icon-img" />
+                              ) : (
+                                <span className={`column-type-icon ${col.type.toLowerCase()}`}>
+                                  {columnTypeIcons[col.type]}
+                                </span>
+                              )}
+                              <span className="column-type-arrow"></span>
                             </div>
                             <span className="column-label">{col.label}</span>
                             {openDropdown === col.key && (
@@ -1022,21 +1249,21 @@ export function JsonDataSourceDialogDesign() {
                                   className={`dropdown-item ${col.type === 'Date' ? 'active' : ''}`}
                                   onClick={() => handleColumnTypeChange(col.key, 'Date')}
                                 >
-                                  <span className="dropdown-icon date">📅</span>
+                                  <span className="dropdown-icon-wrapper"><img src={dateIcon} alt="Date" className="dropdown-icon-img" /></span>
                                   <span>Date</span>
                                 </div>
                                 <div
                                   className={`dropdown-item ${col.type === 'DateTime' ? 'active' : ''}`}
                                   onClick={() => handleColumnTypeChange(col.key, 'DateTime')}
                                 >
-                                  <span className="dropdown-icon datetime">📅</span>
+                                  <span className="dropdown-icon-wrapper"><img src={dateIcon} alt="DateTime" className="dropdown-icon-img" /></span>
                                   <span>DateTime</span>
                                 </div>
                                 <div
                                   className={`dropdown-item ${col.type === 'Boolean' ? 'active' : ''}`}
                                   onClick={() => handleColumnTypeChange(col.key, 'Boolean')}
                                 >
-                                  <span className="dropdown-icon boolean">✓/✗</span>
+                                  <span className="dropdown-icon-wrapper"><img src={booleanIcon} alt="Boolean" className="dropdown-icon-img" /></span>
                                   <span>Boolean</span>
                                 </div>
                               </div>
