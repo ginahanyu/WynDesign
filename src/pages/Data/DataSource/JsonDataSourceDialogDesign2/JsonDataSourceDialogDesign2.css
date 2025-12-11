@@ -1300,3 +1300,88 @@
   color: #fff;
 }
 
+/* ========== Response Section Tabs ========== */
+.response-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.response-tab {
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.response-tab:hover {
+  color: #333;
+}
+
+.response-tab.active {
+  color: #e88a5d;
+}
+
+.response-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #e88a5d;
+}
+
+.response-tab-content {
+  padding: 0;
+}
+
+.response-tab-content .prequery-row {
+  margin-bottom: 16px;
+}
+
+.response-tab-content .prequery-input-row {
+  margin-left: 0;
+  margin-top: 16px;
+}
+
+/* ========== Request Chain Section ========== */
+.request-chain-section {
+  margin-top: 16px;
+}
+
+.request-chain-title {
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.request-chain-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.request-chain-item {
+  font-size: 13px;
+  color: #333;
+}
+
+.request-chain-arrow {
+  flex-shrink: 0;
+}
+
+/* Endpoint Response section height */
+.json-datasource-dialog-design2 .dialog-right-panel .postman-panel .preview-section.expanded {
+  min-height: 460px;
+}
+

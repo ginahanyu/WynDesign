@@ -364,8 +364,9 @@ export function JsonDataSourceDialogDesign2() {
   const [baNameError, setBaNameError] = useState(false)
   const [baActiveTab, setBaActiveTab] = useState<'params' | 'headers' | 'other'>('params')
 
-  // Preview section
-  const [previewExpanded, setPreviewExpanded] = useState(true)
+  // Response section (formerly Preview section)
+  const [responseExpanded, setResponseExpanded] = useState(true)
+  const [responseTab, setResponseTab] = useState<'dataExtraction' | 'preview'>('dataExtraction')
   const [columns, setColumns] = useState<ColumnConfig[]>([
     { key: 'userId', label: 'userId', type: 'Number' },
     { key: 'id', label: 'id', type: 'Number' },
@@ -750,7 +751,7 @@ export function JsonDataSourceDialogDesign2() {
                   className={`postman-tab ${activeTab === 'other' ? 'active' : ''}`}
                   onClick={() => setActiveTab('other')}
                 >
-                  Other
+                  Pre-Request
                 </button>
               </div>
             </div>
@@ -983,184 +984,218 @@ export function JsonDataSourceDialogDesign2() {
                       ))}
                     </select>
                   </div>
-                  <div className="other-form-row prequery-row">
-                    <label className="other-label required">Pre-Query</label>
-                    <div className="prequery-radio-group">
-                      <label className="prequery-radio-label">
-                        <input
-                          type="radio"
-                          name="preQuery"
-                          checked={endpoints[selectedIndex].preQueryType === 'jsonPath'}
-                          onChange={() => {
-                            const updated = [...endpoints]
-                            updated[selectedIndex].preQueryType = 'jsonPath'
-                            setEndpoints(updated)
-                          }}
-                        />
-                        <span className="prequery-radio-custom"></span>
-                        Json Path
-                      </label>
-                      <label className="prequery-radio-label">
-                        <input
-                          type="radio"
-                          name="preQuery"
-                          checked={endpoints[selectedIndex].preQueryType === 'sql'}
-                          onChange={() => {
-                            const updated = [...endpoints]
-                            updated[selectedIndex].preQueryType = 'sql'
-                            setEndpoints(updated)
-                          }}
-                        />
-                        <span className="prequery-radio-custom"></span>
-                        SQL statement with Json functions
-                      </label>
+                  {endpoints[selectedIndex].preRequest !== 'None' && (
+                    <div className="request-chain-section">
+                      <div className="request-chain-title">Request Chain</div>
+                      <div className="request-chain-content">
+                        <span className="request-chain-item">{endpoints[selectedIndex].preRequest}</span>
+                        <svg className="request-chain-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M5 12h14M13 5l7 7-7 7" stroke="#e88a5d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span className="request-chain-item">{endpoints[selectedIndex].name}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="prequery-input-row">
-                    {endpoints[selectedIndex].preQueryType === 'jsonPath' ? (
-                      <input
-                        key={`ep-jsonpath-${selectedIndex}`}
-                        type="text"
-                        className="prequery-input"
-                        defaultValue={endpoints[selectedIndex].jsonPath}
-                        onBlur={(e) => {
-                          const updated = [...endpoints]
-                          updated[selectedIndex].jsonPath = e.target.value
-                          setEndpoints(updated)
-                        }}
-                      />
-                    ) : (
-                      <textarea
-                        key={`ep-sql-${selectedIndex}`}
-                        className="prequery-textarea"
-                        defaultValue={endpoints[selectedIndex].jsonPath}
-                        onBlur={(e) => {
-                          const updated = [...endpoints]
-                          updated[selectedIndex].jsonPath = e.target.value
-                          setEndpoints(updated)
-                        }}
-                      />
-                    )}
-                  </div>
+                  )}
                 </div>
               )}
 
             </div>
 
-            {/* Preview Section */}
-            <div className={`preview-section ${previewExpanded ? 'expanded' : 'collapsed'}`}>
-              <div className="preview-section-header" onClick={() => setPreviewExpanded(!previewExpanded)}>
+            {/* Response Section */}
+            <div className={`preview-section ${responseExpanded ? 'expanded' : 'collapsed'}`}>
+              <div className="preview-section-header" onClick={() => setResponseExpanded(!responseExpanded)}>
                 <div className="preview-section-title">
-                  <span>Preview</span>
+                  <span>Response</span>
                 </div>
-                <div className={`preview-section-arrow ${previewExpanded ? 'expanded' : ''}`}></div>
+                <div className={`preview-section-arrow ${responseExpanded ? 'expanded' : ''}`}></div>
               </div>
-              {previewExpanded && (
+              {responseExpanded && (
                 <div className="preview-section-content">
-                  <div className="preview-table-wrapper">
-                    <table className="preview-table">
-                      <thead>
-                        <tr>
-                          {columns.map((col) => (
-                            <th key={col.key}>
-                              <div className="column-header">
-                                <div
-                                  className="column-type-selector"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setOpenDropdown(openDropdown === col.key ? null : col.key)
-                                  }}
-                                >
-                                  {(col.type === 'Date' || col.type === 'DateTime') ? (
-                                    <img src={dateIcon} alt={col.type} className="column-type-icon-img" />
-                                  ) : col.type === 'Boolean' ? (
-                                    <img src={booleanIcon} alt="Boolean" className="column-type-icon-img" />
-                                  ) : (
-                                    <span className={`column-type-icon ${col.type.toLowerCase()}`}>
-                                      {columnTypeIcons[col.type]}
-                                    </span>
-                                  )}
-                                  <span className="column-type-arrow"></span>
-                                </div>
-                                <span className="column-label">{col.label}</span>
-                                {openDropdown === col.key && (
-                                  <div className="column-type-dropdown">
-                                    <div
-                                      className={`dropdown-item ${col.type === 'Number' ? 'active' : ''}`}
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleColumnTypeChange(col.key, 'Number')
-                                      }}
-                                    >
-                                      <span className="dropdown-icon number">#</span>
-                                      <span>Number</span>
-                                    </div>
-                                    <div
-                                      className={`dropdown-item ${col.type === 'Text' ? 'active' : ''}`}
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleColumnTypeChange(col.key, 'Text')
-                                      }}
-                                    >
-                                      <span className="dropdown-icon text">T</span>
-                                      <span>Text</span>
-                                    </div>
-                                    <div
-                                      className={`dropdown-item ${col.type === 'Date' ? 'active' : ''}`}
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleColumnTypeChange(col.key, 'Date')
-                                      }}
-                                    >
-                                      <span className="dropdown-icon-wrapper"><img src={dateIcon} alt="Date" className="dropdown-icon-img" /></span>
-                                      <span>Date</span>
-                                    </div>
-                                    <div
-                                      className={`dropdown-item ${col.type === 'DateTime' ? 'active' : ''}`}
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleColumnTypeChange(col.key, 'DateTime')
-                                      }}
-                                    >
-                                      <span className="dropdown-icon-wrapper"><img src={dateIcon} alt="DateTime" className="dropdown-icon-img" /></span>
-                                      <span>DateTime</span>
-                                    </div>
-                                    <div
-                                      className={`dropdown-item ${col.type === 'Boolean' ? 'active' : ''}`}
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleColumnTypeChange(col.key, 'Boolean')
-                                      }}
-                                    >
-                                      <span className="dropdown-icon-wrapper"><img src={booleanIcon} alt="Boolean" className="dropdown-icon-img" /></span>
-                                      <span>Boolean</span>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {previewData.map((row, index) => (
-                          <tr key={index}>
-                            <td>{row.userId}</td>
-                            <td>{row.id}</td>
-                            <td>{row.title}</td>
-                            <td>{row.body}</td>
-                            <td>{row.date}</td>
-                            <td>{row.teamsLink}</td>
-                            <td>{row.content}</td>
-                            <td>{row.version}</td>
-                            <td>{row.owner ?? 'null'}</td>
-                            <td>{row.duration ?? 'null'}</td>
-                            <td>{row.remark ?? 'null'}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  {/* Response Tabs */}
+                  <div className="response-tabs">
+                    <button
+                      className={`response-tab ${responseTab === 'dataExtraction' ? 'active' : ''}`}
+                      onClick={() => setResponseTab('dataExtraction')}
+                    >
+                      Data Extraction
+                    </button>
+                    <button
+                      className={`response-tab ${responseTab === 'preview' ? 'active' : ''}`}
+                      onClick={() => setResponseTab('preview')}
+                    >
+                      Preview
+                    </button>
                   </div>
+
+                  {/* Data Extraction Tab Content */}
+                  {responseTab === 'dataExtraction' && (
+                    <div className="response-tab-content">
+                      <div className="prequery-radio-group">
+                        <label className="prequery-radio-label">
+                          <input
+                            type="radio"
+                            name="preQuery"
+                            checked={endpoints[selectedIndex].preQueryType === 'jsonPath'}
+                            onChange={() => {
+                              const updated = [...endpoints]
+                              updated[selectedIndex].preQueryType = 'jsonPath'
+                              setEndpoints(updated)
+                            }}
+                          />
+                          <span className="prequery-radio-custom"></span>
+                          Json Path
+                        </label>
+                        <label className="prequery-radio-label">
+                          <input
+                            type="radio"
+                            name="preQuery"
+                            checked={endpoints[selectedIndex].preQueryType === 'sql'}
+                            onChange={() => {
+                              const updated = [...endpoints]
+                              updated[selectedIndex].preQueryType = 'sql'
+                              setEndpoints(updated)
+                            }}
+                          />
+                          <span className="prequery-radio-custom"></span>
+                          SQL statement with Json functions
+                        </label>
+                      </div>
+                      <div className="prequery-input-row" style={{ marginLeft: 0 }}>
+                        {endpoints[selectedIndex].preQueryType === 'jsonPath' ? (
+                          <input
+                            key={`ep-jsonpath-${selectedIndex}`}
+                            type="text"
+                            className="prequery-input"
+                            defaultValue={endpoints[selectedIndex].jsonPath}
+                            onBlur={(e) => {
+                              const updated = [...endpoints]
+                              updated[selectedIndex].jsonPath = e.target.value
+                              setEndpoints(updated)
+                            }}
+                          />
+                        ) : (
+                          <textarea
+                            key={`ep-sql-${selectedIndex}`}
+                            className="prequery-textarea"
+                            defaultValue={endpoints[selectedIndex].jsonPath}
+                            onBlur={(e) => {
+                              const updated = [...endpoints]
+                              updated[selectedIndex].jsonPath = e.target.value
+                              setEndpoints(updated)
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Preview Tab Content */}
+                  {responseTab === 'preview' && (
+                    <div className="preview-table-wrapper">
+                      <table className="preview-table">
+                        <thead>
+                          <tr>
+                            {columns.map((col) => (
+                              <th key={col.key}>
+                                <div className="column-header">
+                                  <div
+                                    className="column-type-selector"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setOpenDropdown(openDropdown === col.key ? null : col.key)
+                                    }}
+                                  >
+                                    {(col.type === 'Date' || col.type === 'DateTime') ? (
+                                      <img src={dateIcon} alt={col.type} className="column-type-icon-img" />
+                                    ) : col.type === 'Boolean' ? (
+                                      <img src={booleanIcon} alt="Boolean" className="column-type-icon-img" />
+                                    ) : (
+                                      <span className={`column-type-icon ${col.type.toLowerCase()}`}>
+                                        {columnTypeIcons[col.type]}
+                                      </span>
+                                    )}
+                                    <span className="column-type-arrow"></span>
+                                  </div>
+                                  <span className="column-label">{col.label}</span>
+                                  {openDropdown === col.key && (
+                                    <div className="column-type-dropdown">
+                                      <div
+                                        className={`dropdown-item ${col.type === 'Number' ? 'active' : ''}`}
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleColumnTypeChange(col.key, 'Number')
+                                        }}
+                                      >
+                                        <span className="dropdown-icon number">#</span>
+                                        <span>Number</span>
+                                      </div>
+                                      <div
+                                        className={`dropdown-item ${col.type === 'Text' ? 'active' : ''}`}
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleColumnTypeChange(col.key, 'Text')
+                                        }}
+                                      >
+                                        <span className="dropdown-icon text">T</span>
+                                        <span>Text</span>
+                                      </div>
+                                      <div
+                                        className={`dropdown-item ${col.type === 'Date' ? 'active' : ''}`}
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleColumnTypeChange(col.key, 'Date')
+                                        }}
+                                      >
+                                        <span className="dropdown-icon-wrapper"><img src={dateIcon} alt="Date" className="dropdown-icon-img" /></span>
+                                        <span>Date</span>
+                                      </div>
+                                      <div
+                                        className={`dropdown-item ${col.type === 'DateTime' ? 'active' : ''}`}
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleColumnTypeChange(col.key, 'DateTime')
+                                        }}
+                                      >
+                                        <span className="dropdown-icon-wrapper"><img src={dateIcon} alt="DateTime" className="dropdown-icon-img" /></span>
+                                        <span>DateTime</span>
+                                      </div>
+                                      <div
+                                        className={`dropdown-item ${col.type === 'Boolean' ? 'active' : ''}`}
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          handleColumnTypeChange(col.key, 'Boolean')
+                                        }}
+                                      >
+                                        <span className="dropdown-icon-wrapper"><img src={booleanIcon} alt="Boolean" className="dropdown-icon-img" /></span>
+                                        <span>Boolean</span>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {previewData.map((row, index) => (
+                            <tr key={index}>
+                              <td>{row.userId}</td>
+                              <td>{row.id}</td>
+                              <td>{row.title}</td>
+                              <td>{row.body}</td>
+                              <td>{row.date}</td>
+                              <td>{row.teamsLink}</td>
+                              <td>{row.content}</td>
+                              <td>{row.version}</td>
+                              <td>{row.owner ?? 'null'}</td>
+                              <td>{row.duration ?? 'null'}</td>
+                              <td>{row.remark ?? 'null'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1254,7 +1289,7 @@ export function JsonDataSourceDialogDesign2() {
                   className={`postman-tab ${prReqActiveTab === 'other' ? 'active' : ''}`}
                   onClick={() => setPrReqActiveTab('other')}
                 >
-                  Other
+                  Pre-Request
                 </button>
               </div>
             </div>
@@ -1556,8 +1591,25 @@ export function JsonDataSourceDialogDesign2() {
                       }}
                     >
                       <option value="None">None</option>
+                      {preRequests
+                        .filter((pr, index) => index !== selectedIndex)
+                        .map((pr, index) => (
+                          <option key={index} value={pr.name}>{pr.name}</option>
+                        ))}
                     </select>
                   </div>
+                  {preRequests[selectedIndex].preRequest !== 'None' && (
+                    <div className="request-chain-section">
+                      <div className="request-chain-title">Request Chain</div>
+                      <div className="request-chain-content">
+                        <span className="request-chain-item">{preRequests[selectedIndex].preRequest}</span>
+                        <svg className="request-chain-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M5 12h14M13 5l7 7-7 7" stroke="#e88a5d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span className="request-chain-item">{preRequests[selectedIndex].name}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1677,7 +1729,7 @@ export function JsonDataSourceDialogDesign2() {
                   className={`postman-tab ${baActiveTab === 'other' ? 'active' : ''}`}
                   onClick={() => setBaActiveTab('other')}
                 >
-                  Other
+                  Pre-Request
                 </button>
               </div>
             </div>
@@ -1879,6 +1931,18 @@ export function JsonDataSourceDialogDesign2() {
                       ))}
                     </select>
                   </div>
+                  {baseAddresses[selectedIndex].preRequest !== 'None' && (
+                    <div className="request-chain-section">
+                      <div className="request-chain-title">Request Chain</div>
+                      <div className="request-chain-content">
+                        <span className="request-chain-item">{baseAddresses[selectedIndex].preRequest}</span>
+                        <svg className="request-chain-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M5 12h14M13 5l7 7-7 7" stroke="#e88a5d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span className="request-chain-item">{baseAddresses[selectedIndex].name}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
