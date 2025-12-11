@@ -10,7 +10,8 @@
       "Bash(npm run build:*)",
       "Bash(npm run dev:*)",
       "Bash(start http://localhost:5173)",
-      "Bash(start http://localhost:5174)"
+      "Bash(start http://localhost:5174)",
+      "Bash(mkdir:*)"
     ]
   }
 }

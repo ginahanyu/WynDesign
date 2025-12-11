@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { MainLayout } from '@/components/Layout'
-import { JsonDataSourceDialogDesign } from '@/pages'
+import { JsonDataSourceDialogDesign, JsonDataSourceDialogDesign2 } from '@/pages'
 
 export function AppRoutes() {
   return (
@@ -10,6 +10,7 @@ export function AppRoutes() {
         <Route path="data">
           <Route path="data-source">
             <Route path="json-datasource-dialog-design" element={<JsonDataSourceDialogDesign />} />
+            <Route path="json-datasource-dialog-design2" element={<JsonDataSourceDialogDesign2 />} />
           </Route>
         </Route>
       </Route>

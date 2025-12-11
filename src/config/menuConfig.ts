@@ -14,6 +14,11 @@ export const menuConfig: MenuItem[] = [
             label: 'Json DataSource Dialog Design',
             path: '/data/data-source/json-datasource-dialog-design',
           },
+          {
+            key: 'json-datasource-dialog-design2',
+            label: 'Json DataSource Dialog Design2',
+            path: '/data/data-source/json-datasource-dialog-design2',
+          },
         ],
       },
     ],
