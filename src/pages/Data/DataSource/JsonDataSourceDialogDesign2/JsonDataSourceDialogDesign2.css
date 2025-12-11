@@ -1,7 +1,7 @@
 /* Design2 specific overrides */
 .json-datasource-dialog-design2 .dialog-left-panel {
-  min-width: 300px;
-  max-width: calc(50% - 100px);
+  min-width: 250px;
+  max-width: calc(50% - 150px);
 }
 
 /* ========== Postman Style Panel ========== */

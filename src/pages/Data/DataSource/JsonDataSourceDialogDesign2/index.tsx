@@ -693,9 +693,6 @@ export function JsonDataSourceDialogDesign2() {
               >
                 <option value="GET">GET</option>
                 <option value="POST">POST</option>
-                <option value="PUT">PUT</option>
-                <option value="DELETE">DELETE</option>
-                <option value="PATCH">PATCH</option>
               </select>
               <select
                 className={`postman-baseaddress-select ${!endpoints[selectedIndex].baseAddress ? 'placeholder' : ''}`}
@@ -1214,9 +1211,6 @@ export function JsonDataSourceDialogDesign2() {
               >
                 <option value="GET">GET</option>
                 <option value="POST">POST</option>
-                <option value="PUT">PUT</option>
-                <option value="DELETE">DELETE</option>
-                <option value="PATCH">PATCH</option>
               </select>
               <input
                 key={`prereq-url-${selectedIndex}`}
