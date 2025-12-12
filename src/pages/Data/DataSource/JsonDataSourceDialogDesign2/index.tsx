@@ -4,7 +4,7 @@ import './JsonDataSourceDialogDesign2.css'
 import deleteIcon from '@/resource/delete.png'
 import filterIcon from '@/resource/filter.svg'
 import validateAllIcon from '@/resource/validateAll.png'
-import duplicateIcon from '@/resource/duplicate.png'
+// import duplicateIcon from '@/resource/duplicate.png'
 import dateIcon from '@/resource/date.svg'
 import booleanIcon from '@/resource/boolean.svg'
 
@@ -1592,7 +1592,7 @@ export function JsonDataSourceDialogDesign2() {
                     >
                       <option value="None">None</option>
                       {preRequests
-                        .filter((pr, index) => index !== selectedIndex)
+                        .filter((_, index) => index !== selectedIndex)
                         .map((pr, index) => (
                           <option key={index} value={pr.name}>{pr.name}</option>
                         ))}
