@@ -37,6 +37,12 @@
   letter-spacing: 0.5px;
   white-space: nowrap;
   overflow: hidden;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.sidebar-title:hover {
+  color: #2563eb;
 }
 
 .collapse-btn {

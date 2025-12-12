@@ -54,10 +54,16 @@ interface SidebarProps {
 }
 
 export function Sidebar({ collapsed, onToggleCollapse }: SidebarProps) {
+  const navigate = useNavigate()
+
+  const handleTitleClick = () => {
+    navigate('/')
+  }
+
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
-        {!collapsed && <h1 className="sidebar-title">WynDesign</h1>}
+        {!collapsed && <h1 className="sidebar-title" onClick={handleTitleClick}>WynDesign</h1>}
         <button className="collapse-btn" onClick={onToggleCollapse} title={collapsed ? 'Expand' : 'Collapse'}>
           {collapsed ? '»' : '«'}
         </button>
