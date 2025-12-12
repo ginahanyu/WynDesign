@@ -1,0 +1,6 @@
+services:
+  wyndesign:
+    build: .
+    ports:
+      - "4590:80"
+    restart: unless-stopped
