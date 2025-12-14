@@ -182,7 +182,7 @@ function getAllOrgIds(nodes: OrgNode[]): string[] {
 
 // 用户选择器组件
 function UserTreeSelect({
-  value,
+  value: _value,
   displayName,
   onChange,
 }: {

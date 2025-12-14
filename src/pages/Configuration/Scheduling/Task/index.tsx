@@ -10,7 +10,6 @@ import {
   RightOutlined,
   DoubleLeftOutlined,
   DoubleRightOutlined,
-  FileOutlined,
   TableOutlined,
   CaretDownOutlined,
   UserOutlined,
@@ -50,7 +49,7 @@ type ExecutionType = 'one-time' | 'scheduled'
 
 // Owner 用户选择器组件
 function OwnerSelect({
-  value,
+  value: _value,
   displayName,
   onChange,
 }: {
