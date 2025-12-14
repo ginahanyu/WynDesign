@@ -1,3 +1,5 @@
 export { Dashboard } from './Dashboard'
 export { JsonDataSourceDialogDesign } from './Data/DataSource/JsonDataSourceDialogDesign'
 export { JsonDataSourceDialogDesign2 } from './Data/DataSource/JsonDataSourceDialogDesign2'
+export { Security } from './Configuration/Scheduling/Security'
+export { Task } from './Configuration/Scheduling/Task'

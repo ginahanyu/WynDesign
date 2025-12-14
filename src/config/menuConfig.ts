@@ -18,4 +18,26 @@ export const menuConfig: MenuItem[] = [
       },
     ],
   },
+  {
+    key: 'configuration',
+    label: 'Configuration',
+    children: [
+      {
+        key: 'scheduling',
+        label: 'Scheduling',
+        children: [
+          {
+            key: 'security',
+            label: 'Security',
+            path: '/configuration/scheduling/security',
+          },
+          {
+            key: 'task',
+            label: 'Task',
+            path: '/configuration/scheduling/task',
+          },
+        ],
+      },
+    ],
+  },
 ]
