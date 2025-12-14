@@ -1,6 +1,7 @@
 services:
   wyndesign:
     build: .
+    image: wyndesign:latest
     ports:
       - "4590:80"
     restart: unless-stopped
