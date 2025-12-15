@@ -50,7 +50,7 @@ type ExecutionType = 'one-time' | 'scheduled'
 
 // Owner 用户选择器组件
 function OwnerSelect({
-  value: _value,
+  value,
   displayName,
   onChange,
 }: {
