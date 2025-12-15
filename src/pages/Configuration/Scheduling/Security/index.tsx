@@ -1,16 +1,16 @@
 import { useState, ReactNode, useRef, useEffect } from 'react'
 import {
-  ClockCircleOutlined,
-  SnippetsOutlined,
-  CloudServerOutlined,
+  UserOutlined,
+  TeamOutlined,
   SafetyOutlined,
   PlusOutlined,
   DeleteOutlined,
   ApartmentOutlined,
-  UserOutlined,
   CaretRightOutlined,
   CaretDownOutlined,
   SearchOutlined,
+  RightOutlined,
+  InfoCircleOutlined,
 } from '@ant-design/icons'
 import { authorizationStore } from '@/store/authorizationStore'
 import './Security.css'
@@ -19,7 +19,6 @@ interface MenuItem {
   key: string
   label: string
   icon: ReactNode
-  count?: number
 }
 
 interface Authorization {
@@ -37,9 +36,9 @@ interface OrgNode {
 }
 
 const menuItems: MenuItem[] = [
-  { key: 'schedule-settings', label: 'Schedule Settings', icon: <ClockCircleOutlined /> },
-  { key: 'task-templates', label: 'Task Templates', icon: <SnippetsOutlined />, count: 15 },
-  { key: 'external-storage', label: 'External Storage', icon: <CloudServerOutlined />, count: 0 },
+  { key: 'personal-information', label: 'Personal Information', icon: <UserOutlined /> },
+  { key: 'preference', label: 'Preference', icon: <TeamOutlined /> },
+  { key: 'change-password', label: 'Change Password', icon: <TeamOutlined /> },
   { key: 'security', label: 'Security', icon: <SafetyOutlined /> },
 ]
 
@@ -47,127 +46,293 @@ const menuItems: MenuItem[] = [
 const orgTree: OrgNode[] = [
   {
     id: 'grapecity',
-    name: 'grapecity',
+    name: 'GrapeCity',
     type: 'org',
     children: [
       {
         id: 'xian',
-        name: 'Xian',
+        name: 'Xi\'an Branch',
         type: 'org',
         children: [
+          { id: 'user-xian-1', name: 'Zhang Wei', type: 'user' },
+          { id: 'user-xian-2', name: 'Li Ming', type: 'user' },
+          { id: 'user-xian-3', name: 'Wang Fang', type: 'user' },
           {
             id: 'dd1',
-            name: 'DD1',
+            name: 'Development Dept 1',
             type: 'org',
             children: [
-              { id: 'user1', name: 'user1-DD1', type: 'user' },
+              { id: 'user-dd1-1', name: 'Chen Yang', type: 'user' },
+              { id: 'user-dd1-2', name: 'Liu Xiao', type: 'user' },
+              { id: 'user-dd1-3', name: 'Zhao Jun', type: 'user' },
+              { id: 'user-dd1-4', name: 'Sun Lei', type: 'user' },
+              { id: 'user-dd1-5', name: 'Zhou Ping', type: 'user' },
+              { id: 'user-dd1-6', name: 'Qian Wei', type: 'user' },
+              { id: 'user-dd1-7', name: 'Wang Jian', type: 'user' },
+              { id: 'user-dd1-8', name: 'Li Qiang', type: 'user' },
+              { id: 'user-dd1-9', name: 'Zhang Hui', type: 'user' },
+              { id: 'user-dd1-10', name: 'Xu Dong', type: 'user' },
+              { id: 'user-dd1-11', name: 'He Fang', type: 'user' },
+              { id: 'user-dd1-12', name: 'Gao Ming', type: 'user' },
+              { id: 'user-dd1-13', name: 'Lin Tao', type: 'user' },
+              { id: 'user-dd1-14', name: 'Huang Lei', type: 'user' },
+              { id: 'user-dd1-15', name: 'Wu Yong', type: 'user' },
+            ],
+          },
+          {
+            id: 'dd2',
+            name: 'Development Dept 2',
+            type: 'org',
+            children: [
+              { id: 'user-dd2-1', name: 'Wu Hua', type: 'user' },
+              { id: 'user-dd2-2', name: 'Zheng Kai', type: 'user' },
+              { id: 'user-dd2-3', name: 'Huang Tao', type: 'user' },
             ],
           },
           {
             id: 'dd3',
-            name: 'DD3',
+            name: 'Development Dept 3',
             type: 'org',
             children: [
-              { id: 'user2', name: 'user2-DD3', type: 'user' },
-              { id: 'user3', name: 'user3-DD3', type: 'user' },
+              { id: 'user-dd3-1', name: 'Lin Jie', type: 'user' },
+              { id: 'user-dd3-2', name: 'He Ying', type: 'user' },
+              { id: 'user-dd3-3', name: 'Guo Qiang', type: 'user' },
+              { id: 'user-dd3-4', name: 'Ma Li', type: 'user' },
+            ],
+          },
+          {
+            id: 'qa',
+            name: 'QA Team',
+            type: 'org',
+            children: [
+              { id: 'user-qa-1', name: 'Xu Mei', type: 'user' },
+              { id: 'user-qa-2', name: 'Luo Dan', type: 'user' },
+              { id: 'user-qa-3', name: 'Jiang Bo', type: 'user' },
+              { id: 'user-qa-4', name: 'Cao Yu', type: 'user' },
+              { id: 'user-qa-5', name: 'Tang Xin', type: 'user' },
+              { id: 'user-qa-6', name: 'Deng Hui', type: 'user' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'beijing',
+        name: 'Beijing Branch',
+        type: 'org',
+        children: [
+          { id: 'user-bj-1', name: 'Feng Chao', type: 'user' },
+          { id: 'user-bj-2', name: 'Song Yan', type: 'user' },
+          {
+            id: 'bj-sales',
+            name: 'Sales Team',
+            type: 'org',
+            children: [
+              { id: 'user-bj-sales-1', name: 'Pan Wei', type: 'user' },
+              { id: 'user-bj-sales-2', name: 'Ye Ting', type: 'user' },
+              { id: 'user-bj-sales-3', name: 'Han Dong', type: 'user' },
+              { id: 'user-bj-sales-4', name: 'Shen Li', type: 'user' },
+            ],
+          },
+          {
+            id: 'bj-marketing',
+            name: 'Marketing Team',
+            type: 'org',
+            children: [
+              { id: 'user-bj-mkt-1', name: 'Du Fei', type: 'user' },
+              { id: 'user-bj-mkt-2', name: 'Xie Jing', type: 'user' },
+              { id: 'user-bj-mkt-3', name: 'Zhu Rui', type: 'user' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'shanghai',
+        name: 'Shanghai Branch',
+        type: 'org',
+        children: [
+          { id: 'user-sh-1', name: 'Qian Hao', type: 'user' },
+          {
+            id: 'sh-support',
+            name: 'Support Team',
+            type: 'org',
+            children: [
+              { id: 'user-sh-sup-1', name: 'Gu Fang', type: 'user' },
+              { id: 'user-sh-sup-2', name: 'Meng Jia', type: 'user' },
+              { id: 'user-sh-sup-3', name: 'Bai Xue', type: 'user' },
+              { id: 'user-sh-sup-4', name: 'Shi Tong', type: 'user' },
+              { id: 'user-sh-sup-5', name: 'Ren Yi', type: 'user' },
+            ],
+          },
+          {
+            id: 'sh-finance',
+            name: 'Finance Team',
+            type: 'org',
+            children: [
+              { id: 'user-sh-fin-1', name: 'Hou Min', type: 'user' },
+              { id: 'user-sh-fin-2', name: 'Kong Ling', type: 'user' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'hangzhou',
+        name: 'Hangzhou Branch',
+        type: 'org',
+        children: [
+          { id: 'user-hz-1', name: 'Wan Jun', type: 'user' },
+          { id: 'user-hz-2', name: 'Yan Fei', type: 'user' },
+          { id: 'user-hz-3', name: 'Lu Chen', type: 'user' },
+          {
+            id: 'hz-rd',
+            name: 'R&D Center',
+            type: 'org',
+            children: [
+              { id: 'user-hz-rd-1', name: 'Cui Gang', type: 'user' },
+              { id: 'user-hz-rd-2', name: 'Fan Hua', type: 'user' },
+              { id: 'user-hz-rd-3', name: 'Yin Jie', type: 'user' },
+              { id: 'user-hz-rd-4', name: 'Qiu Lan', type: 'user' },
             ],
           },
         ],
       },
     ],
   },
+  {
+    id: 'mescius',
+    name: 'MESCIUS',
+    type: 'org',
+    children: [
+      {
+        id: 'mescius-us',
+        name: 'US Office',
+        type: 'org',
+        children: [
+          { id: 'user-us-1', name: 'John Smith', type: 'user' },
+          { id: 'user-us-2', name: 'Emily Davis', type: 'user' },
+          { id: 'user-us-3', name: 'Michael Johnson', type: 'user' },
+          { id: 'user-us-4', name: 'Sarah Wilson', type: 'user' },
+        ],
+      },
+      {
+        id: 'mescius-jp',
+        name: 'Japan Office',
+        type: 'org',
+        children: [
+          { id: 'user-jp-1', name: 'Tanaka Yuki', type: 'user' },
+          { id: 'user-jp-2', name: 'Suzuki Hana', type: 'user' },
+          { id: 'user-jp-3', name: 'Yamamoto Ken', type: 'user' },
+        ],
+      },
+    ],
+  },
 ]
 
-// 树形节点组件
+// 树形节点组件（仅组织节点，不包含用户）
 function OrgTreeNode({
   node,
   level,
   expandedNodes,
+  selectedOrgId,
   onToggle,
-  onSelect,
+  onSelectOrg,
 }: {
   node: OrgNode
   level: number
   expandedNodes: Set<string>
+  selectedOrgId: string
   onToggle: (id: string) => void
-  onSelect: (id: string, name: string) => void
+  onSelectOrg: (org: OrgNode) => void
 }) {
-  const hasChildren = node.children && node.children.length > 0
+  const hasOrgChildren = node.children?.some(child => child.type === 'org')
   const isExpanded = expandedNodes.has(node.id)
-  const isOrg = node.type === 'org'
+  const isSelected = selectedOrgId === node.id
 
   return (
     <div className="org-tree-node">
       <div
-        className={`org-tree-item ${isOrg ? 'org-item' : 'user-item'}`}
-        style={{ paddingLeft: `${level * 20 + 8}px` }}
-        onClick={() => {
-          if (isOrg && hasChildren) {
-            onToggle(node.id)
-          } else if (!isOrg) {
-            onSelect(node.id, node.name)
-          }
-        }}
+        className={`org-tree-item org-item ${isSelected ? 'selected' : ''}`}
+        style={{ paddingLeft: `${level * 16 + 8}px` }}
       >
-        {isOrg && hasChildren && (
-          <span className="org-tree-arrow">
+        {hasOrgChildren && (
+          <span
+            className="org-tree-arrow"
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggle(node.id)
+            }}
+          >
             {isExpanded ? <CaretDownOutlined /> : <CaretRightOutlined />}
           </span>
         )}
-        {isOrg && !hasChildren && <span className="org-tree-arrow-placeholder" />}
-        <span className="org-tree-icon">
-          {isOrg ? <ApartmentOutlined /> : <UserOutlined />}
+        {!hasOrgChildren && <span className="org-tree-arrow-placeholder" />}
+        <span
+          className="org-tree-content"
+          onClick={() => onSelectOrg(node)}
+        >
+          <span className="org-tree-icon">
+            <ApartmentOutlined />
+          </span>
+          <span className="org-tree-label">{node.name}</span>
         </span>
-        <span className="org-tree-label">{node.name}</span>
       </div>
-      {hasChildren && isExpanded && (
+      {hasOrgChildren && isExpanded && (
         <div className="org-tree-children">
-          {node.children!.map((child) => (
-            <OrgTreeNode
-              key={child.id}
-              node={child}
-              level={level + 1}
-              expandedNodes={expandedNodes}
-              onToggle={onToggle}
-              onSelect={onSelect}
-            />
-          ))}
+          {node.children!
+            .filter(child => child.type === 'org')
+            .map((child) => (
+              <OrgTreeNode
+                key={child.id}
+                node={child}
+                level={level + 1}
+                expandedNodes={expandedNodes}
+                selectedOrgId={selectedOrgId}
+                onToggle={onToggle}
+                onSelectOrg={onSelectOrg}
+              />
+            ))}
         </div>
       )}
     </div>
   )
 }
 
-// 搜索过滤树节点
-function filterOrgTree(nodes: OrgNode[], keyword: string): OrgNode[] {
+// 过滤组织树（仅保留组织节点）
+function filterOrgTreeByKeyword(nodes: OrgNode[], keyword: string): OrgNode[] {
   if (!keyword.trim()) return nodes
 
   const lowerKeyword = keyword.toLowerCase()
 
   const filterNode = (node: OrgNode): OrgNode | null => {
-    // 如果是用户节点，检查名称是否匹配
-    if (node.type === 'user') {
-      return node.name.toLowerCase().includes(lowerKeyword) ? node : null
-    }
+    if (node.type !== 'org') return null
 
-    // 如果是组织节点，递归过滤子节点
-    if (node.children) {
-      const filteredChildren = node.children
-        .map((child) => filterNode(child))
-        .filter((child): child is OrgNode => child !== null)
+    // 检查当前组织名称是否匹配
+    const nameMatches = node.name.toLowerCase().includes(lowerKeyword)
 
-      if (filteredChildren.length > 0) {
-        return { ...node, children: filteredChildren }
+    // 递归过滤子组织节点
+    const filteredChildren = node.children
+      ?.map(child => filterNode(child))
+      .filter((child): child is OrgNode => child !== null) || []
+
+    // 如果名称匹配或有匹配的子节点，则保留
+    if (nameMatches || filteredChildren.length > 0) {
+      return {
+        ...node,
+        children: nameMatches ? node.children : filteredChildren
       }
     }
 
     return null
   }
 
-  return nodes.map((node) => filterNode(node)).filter((node): node is OrgNode => node !== null)
+  return nodes.map(node => filterNode(node)).filter((node): node is OrgNode => node !== null)
 }
 
-// 获取所有组织节点ID（用于搜索时展开所有节点）
+// 获取组织下的直接用户（不包括子组织的用户）
+function getUsersFromOrg(org: OrgNode): OrgNode[] {
+  return org.children?.filter(child => child.type === 'user') || []
+}
+
+// 获取所有组织节点ID
 function getAllOrgIds(nodes: OrgNode[]): string[] {
   const ids: string[] = []
   const traverse = (node: OrgNode) => {
@@ -180,7 +345,7 @@ function getAllOrgIds(nodes: OrgNode[]): string[] {
   return ids
 }
 
-// 用户选择器组件
+// 用户选择器组件 - 左右两栏布局
 function UserTreeSelect({
   value,
   displayName,
@@ -191,10 +356,11 @@ function UserTreeSelect({
   onChange: (userId: string, userName: string) => void
 }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [searchKeyword, setSearchKeyword] = useState('')
+  const [orgSearchKeyword, setOrgSearchKeyword] = useState('')
+  const [userSearchKeyword, setUserSearchKeyword] = useState('')
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['grapecity', 'xian']))
+  const [selectedOrg, setSelectedOrg] = useState<OrgNode | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const searchInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -206,20 +372,14 @@ function UserTreeSelect({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  // 搜索组织时展开所有匹配的节点
   useEffect(() => {
-    if (isOpen && searchInputRef.current) {
-      searchInputRef.current.focus()
-    }
-  }, [isOpen])
-
-  // 搜索时展开所有匹配的节点
-  useEffect(() => {
-    if (searchKeyword.trim()) {
-      const filteredTree = filterOrgTree(orgTree, searchKeyword)
+    if (orgSearchKeyword.trim()) {
+      const filteredTree = filterOrgTreeByKeyword(orgTree, orgSearchKeyword)
       const allIds = getAllOrgIds(filteredTree)
       setExpandedNodes(new Set(allIds))
     }
-  }, [searchKeyword])
+  }, [orgSearchKeyword])
 
   const handleToggle = (id: string) => {
     setExpandedNodes((prev) => {
@@ -233,13 +393,29 @@ function UserTreeSelect({
     })
   }
 
-  const handleSelect = (userId: string, userName: string) => {
-    onChange(userId, userName)
-    setIsOpen(false)
-    setSearchKeyword('')
+  const handleSelectOrg = (org: OrgNode) => {
+    setSelectedOrg(org)
+    setUserSearchKeyword('')
   }
 
-  const filteredTree = filterOrgTree(orgTree, searchKeyword)
+  const handleSelectUser = (userId: string, userName: string) => {
+    onChange(userId, userName)
+    setIsOpen(false)
+    setOrgSearchKeyword('')
+    setUserSearchKeyword('')
+    setSelectedOrg(null)
+  }
+
+  // 过滤组织树
+  const filteredOrgTree = filterOrgTreeByKeyword(orgTree, orgSearchKeyword)
+
+  // 获取选中组织下的用户
+  const usersInOrg = selectedOrg ? getUsersFromOrg(selectedOrg) : []
+
+  // 过滤用户列表
+  const filteredUsers = userSearchKeyword.trim()
+    ? usersInOrg.filter(user => user.name.toLowerCase().includes(userSearchKeyword.toLowerCase()))
+    : usersInOrg
 
   return (
     <div className="user-tree-select" ref={containerRef}>
@@ -251,33 +427,73 @@ function UserTreeSelect({
       </div>
       {isOpen && (
         <div className="user-tree-select-dropdown">
-          <div className="user-tree-search">
-            <SearchOutlined className="user-tree-search-icon" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              className="user-tree-search-input"
-              placeholder="Search user..."
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>
-          <div className="user-tree-list">
-            {filteredTree.length === 0 ? (
-              <div className="user-tree-empty">No results found</div>
-            ) : (
-              filteredTree.map((node) => (
-                <OrgTreeNode
-                  key={node.id}
-                  node={node}
-                  level={0}
-                  expandedNodes={expandedNodes}
-                  onToggle={handleToggle}
-                  onSelect={handleSelect}
+          <div className="user-select-panels">
+            {/* 左侧：组织树 */}
+            <div className="user-select-panel org-panel">
+              <div className="panel-header">Organizations</div>
+              <div className="panel-search">
+                <SearchOutlined className="panel-search-icon" />
+                <input
+                  type="text"
+                  className="panel-search-input"
+                  placeholder="Search organization..."
+                  value={orgSearchKeyword}
+                  onChange={(e) => setOrgSearchKeyword(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
                 />
-              ))
-            )}
+              </div>
+              <div className="panel-content">
+                {filteredOrgTree.length === 0 ? (
+                  <div className="panel-empty">No organizations found</div>
+                ) : (
+                  filteredOrgTree.map((node) => (
+                    <OrgTreeNode
+                      key={node.id}
+                      node={node}
+                      level={0}
+                      expandedNodes={expandedNodes}
+                      selectedOrgId={selectedOrg?.id || ''}
+                      onToggle={handleToggle}
+                      onSelectOrg={handleSelectOrg}
+                    />
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* 右侧：用户列表 */}
+            <div className="user-select-panel user-panel">
+              <div className="panel-header">Users</div>
+              <div className="panel-search">
+                <SearchOutlined className="panel-search-icon" />
+                <input
+                  type="text"
+                  className="panel-search-input"
+                  placeholder="Search user..."
+                  value={userSearchKeyword}
+                  onChange={(e) => setUserSearchKeyword(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+              <div className="panel-content">
+                {!selectedOrg ? (
+                  <div className="panel-empty">Select an organization first</div>
+                ) : filteredUsers.length === 0 ? (
+                  <div className="panel-empty">No users found</div>
+                ) : (
+                  filteredUsers.map((user) => (
+                    <div
+                      key={user.id}
+                      className="user-list-item"
+                      onClick={() => handleSelectUser(user.id, user.name)}
+                    >
+                      <UserOutlined className="user-list-icon" />
+                      <span className="user-list-name">{user.name}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -326,13 +542,13 @@ function SecurityContent() {
     <div className="security-authorization">
       <div className="security-authorization-toolbar">
         <button className="security-add-btn" onClick={handleAdd}>
-          <PlusOutlined /> Add Authorization
+          <PlusOutlined /> Add Delegation
         </button>
       </div>
       <table className="security-authorization-table">
         <thead>
           <tr>
-            <th>Authorize To</th>
+            <th>Delegate To</th>
             <th>Operations</th>
             <th></th>
           </tr>
@@ -341,7 +557,7 @@ function SecurityContent() {
           {authorizations.length === 0 ? (
             <tr>
               <td colSpan={3} className="security-table-empty">
-                No authorization records. Click "Add Authorization" to add.
+                No delegation records. Click "Add Delegation" to add.
               </td>
             </tr>
           ) : (
@@ -362,6 +578,12 @@ function SecurityContent() {
                       onChange={(e) => handlePermissionChange(auth.id, e.target.checked)}
                     />
                     Create Task
+                    <span className="security-info-tooltip">
+                      <InfoCircleOutlined className="security-info-icon" />
+                      <span className="security-tooltip-content">
+                        When enabled, the delegated user can create tasks on your behalf. You will remain the owner of all tasks they create.
+                      </span>
+                    </span>
                   </label>
                 </td>
                 <td>
@@ -384,60 +606,35 @@ function SecurityContent() {
 export function Security() {
   const [activeMenu, setActiveMenu] = useState('security')
 
-  const getTitle = (key: string) => {
-    switch (key) {
-      case 'schedule-settings':
-        return { title: 'SCHEDULE SETTINGS', subtitle: 'Schedule settings management' }
-      case 'task-templates':
-        return { title: 'TASK TEMPLATES', subtitle: 'Task templates management' }
-      case 'external-storage':
-        return { title: 'EXTERNAL STORAGE', subtitle: 'External storage management' }
-      case 'security':
-        return { title: 'SECURITY', subtitle: 'Security management' }
-      default:
-        return { title: '', subtitle: '' }
-    }
-  }
-
-  const { title, subtitle } = getTitle(activeMenu)
-  const activeItem = menuItems.find((item) => item.key === activeMenu)
-
-  const renderContent = () => {
-    switch (activeMenu) {
-      case 'security':
-        return <SecurityContent />
-      default:
-        return null
-    }
-  }
-
   return (
     <div className="security-page">
-      <div className="security-sidebar">
-        <div className="security-sidebar-title">Scheduling</div>
-        <ul className="security-menu">
-          {menuItems.map((item) => (
-            <li
-              key={item.key}
-              className={`security-menu-item ${activeMenu === item.key ? 'active' : ''}`}
-              onClick={() => setActiveMenu(item.key)}
-            >
-              <span className="security-menu-icon">{item.icon}</span>
-              <span className="security-menu-label">{item.label}</span>
-              {item.count !== undefined && (
-                <span className="security-menu-count">{item.count}</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="security-content">
-        <div className="security-content-header">
-          <span className="security-content-icon">{activeItem?.icon}</span>
-          <span className="security-content-title">{title}</span>
-          <span className="security-content-subtitle">{subtitle}</span>
+      {/* Top Header */}
+      <div className="security-header">Profile Setting</div>
+
+      {/* Main Content */}
+      <div className="security-main">
+        {/* Left Sidebar */}
+        <div className="security-sidebar">
+          <ul className="security-menu">
+            {menuItems.map((item) => (
+              <li
+                key={item.key}
+                className={`security-menu-item ${activeMenu === item.key ? 'active' : ''}`}
+                onClick={() => setActiveMenu(item.key)}
+              >
+                <span className="security-menu-icon">{item.icon}</span>
+                <span className="security-menu-label">{item.label}</span>
+                <span className="security-menu-arrow"><RightOutlined /></span>
+              </li>
+            ))}
+          </ul>
         </div>
-        <div className="security-content-body">{renderContent()}</div>
+
+        {/* Right Content */}
+        <div className="security-content">
+          <div className="security-content-title">Security</div>
+          {activeMenu === 'security' && <SecurityContent />}
+        </div>
       </div>
     </div>
   )

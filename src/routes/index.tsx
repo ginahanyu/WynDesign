@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { MainLayout } from '@/components/Layout'
-import { Dashboard, JsonDataSourceDialogDesign, JsonDataSourceDialogDesign2, Security, Task } from '@/pages'
+import { Dashboard, JsonDataSourceDialogDesign, JsonDataSourceDialogDesign2, Security, Task, AddTask } from '@/pages'
 
 export function AppRoutes() {
   return (
@@ -17,6 +17,7 @@ export function AppRoutes() {
           <Route path="scheduling">
             <Route path="security" element={<Security />} />
             <Route path="task" element={<Task />} />
+            <Route path="add-task" element={<AddTask />} />
           </Route>
         </Route>
       </Route>

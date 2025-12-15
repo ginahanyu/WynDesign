@@ -36,6 +36,11 @@ export const menuConfig: MenuItem[] = [
             label: 'Task',
             path: '/configuration/scheduling/task',
           },
+          {
+            key: 'add-task',
+            label: 'Add Task',
+            path: '/configuration/scheduling/add-task',
+          },
         ],
       },
     ],

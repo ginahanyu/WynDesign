@@ -12,8 +12,9 @@ import {
   DoubleRightOutlined,
   FileOutlined,
   TableOutlined,
-  CaretDownOutlined,
+  DownOutlined,
   UserOutlined,
+  CloseCircleFilled,
 } from '@ant-design/icons'
 import { authorizationStore, AuthorizedUser } from '@/store/authorizationStore'
 import './Task.css'
@@ -89,32 +90,49 @@ function OwnerSelect({
     setIsOpen(false)
   }
 
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onChange('', '')
+  }
+
   return (
     <div className="owner-select" ref={containerRef}>
-      <div className="owner-select-input" onClick={() => setIsOpen(!isOpen)}>
-        <span className={displayName ? '' : 'placeholder'}>
-          {displayName || '-- Select Owner --'}
-        </span>
-        <CaretDownOutlined className="owner-select-arrow" />
-      </div>
-      {isOpen && (
-        <div className="owner-select-dropdown">
-          {authorizedUsers.length === 0 ? (
-            <div className="owner-select-empty">No authorized users. Please add users in Security page first.</div>
-          ) : (
-            <div className="owner-select-list">
-              {authorizedUsers.map((user) => (
-                <div
-                  key={user.userId}
-                  className="owner-select-item"
-                  onClick={() => handleSelect(user.userId, user.userName)}
-                >
-                  <UserOutlined className="owner-select-item-icon" />
-                  <span className="owner-select-item-name">{user.userName}</span>
-                </div>
-              ))}
-            </div>
+      <div
+        className={`owner-select-input ${!value ? 'placeholder' : ''} ${authorizedUsers.length === 0 ? 'disabled' : ''}`}
+        onClick={() => authorizedUsers.length > 0 && setIsOpen(!isOpen)}
+      >
+        {authorizedUsers.length === 0 ? (
+          <span className="owner-select-text">No delegated users</span>
+        ) : displayName ? (
+          <span className="owner-select-text">
+            <UserOutlined className="owner-select-user-icon" />
+            {displayName}
+          </span>
+        ) : (
+          <span className="owner-select-text">Select owner</span>
+        )}
+        <div className="owner-select-icons">
+          {value && (
+            <CloseCircleFilled
+              className="owner-select-clear-icon"
+              onClick={handleClear}
+            />
           )}
+          <DownOutlined className="owner-select-arrow" />
+        </div>
+      </div>
+      {isOpen && authorizedUsers.length > 0 && (
+        <div className="owner-select-dropdown">
+          {authorizedUsers.map((user) => (
+            <div
+              key={user.userId}
+              className={`owner-select-item ${value === user.userId ? 'selected' : ''}`}
+              onClick={() => handleSelect(user.userId, user.userName)}
+            >
+              <UserOutlined className="owner-select-user-icon" />
+              <span className="owner-select-item-name">{user.userName}</span>
+            </div>
+          ))}
         </div>
       )}
     </div>
