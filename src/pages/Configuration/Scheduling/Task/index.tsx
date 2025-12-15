@@ -10,7 +10,6 @@ import {
   RightOutlined,
   DoubleLeftOutlined,
   DoubleRightOutlined,
-  FileOutlined,
   TableOutlined,
   DownOutlined,
   UserOutlined,

@@ -347,7 +347,7 @@ function getAllOrgIds(nodes: OrgNode[]): string[] {
 
 // 用户选择器组件 - 左右两栏布局
 function UserTreeSelect({
-  value,
+  value: _value,
   displayName,
   onChange,
 }: {
