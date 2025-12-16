@@ -23,6 +23,8 @@ interface MenuItem {
 
 interface Authorization {
   id: string
+  orgId: string
+  orgName: string
   userId: string
   userName: string
   createTask: boolean
@@ -345,21 +347,19 @@ function getAllOrgIds(nodes: OrgNode[]): string[] {
   return ids
 }
 
-// 用户选择器组件 - 左右两栏布局
-function UserTreeSelect({
-  value: _value,
+// 组织选择器组件
+function OrganizationSelect({
+  value,
   displayName,
   onChange,
 }: {
   value: string
   displayName: string
-  onChange: (userId: string, userName: string) => void
+  onChange: (orgId: string, orgName: string) => void
 }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [orgSearchKeyword, setOrgSearchKeyword] = useState('')
-  const [userSearchKeyword, setUserSearchKeyword] = useState('')
+  const [searchKeyword, setSearchKeyword] = useState('')
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(['grapecity', 'xian']))
-  const [selectedOrg, setSelectedOrg] = useState<OrgNode | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -374,12 +374,12 @@ function UserTreeSelect({
 
   // 搜索组织时展开所有匹配的节点
   useEffect(() => {
-    if (orgSearchKeyword.trim()) {
-      const filteredTree = filterOrgTreeByKeyword(orgTree, orgSearchKeyword)
+    if (searchKeyword.trim()) {
+      const filteredTree = filterOrgTreeByKeyword(orgTree, searchKeyword)
       const allIds = getAllOrgIds(filteredTree)
       setExpandedNodes(new Set(allIds))
     }
-  }, [orgSearchKeyword])
+  }, [searchKeyword])
 
   const handleToggle = (id: string) => {
     setExpandedNodes((prev) => {
@@ -394,106 +394,162 @@ function UserTreeSelect({
   }
 
   const handleSelectOrg = (org: OrgNode) => {
-    setSelectedOrg(org)
-    setUserSearchKeyword('')
+    onChange(org.id, org.name)
+    setIsOpen(false)
+    setSearchKeyword('')
   }
+
+  // 过滤组织树
+  const filteredOrgTree = filterOrgTreeByKeyword(orgTree, searchKeyword)
+
+  return (
+    <div className="org-select" ref={containerRef}>
+      <div className="org-select-input" onClick={() => setIsOpen(!isOpen)}>
+        <span className={displayName ? '' : 'placeholder'}>
+          {displayName || '-- Select Organization --'}
+        </span>
+        <CaretDownOutlined className="org-select-arrow" />
+      </div>
+      {isOpen && (
+        <div className="org-select-dropdown">
+          <div className="org-select-search">
+            <SearchOutlined className="org-select-search-icon" />
+            <input
+              type="text"
+              className="org-select-search-input"
+              placeholder="Search organization..."
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+          <div className="org-select-content">
+            {filteredOrgTree.length === 0 ? (
+              <div className="org-select-empty">No organizations found</div>
+            ) : (
+              filteredOrgTree.map((node) => (
+                <OrgTreeNode
+                  key={node.id}
+                  node={node}
+                  level={0}
+                  expandedNodes={expandedNodes}
+                  selectedOrgId={value}
+                  onToggle={handleToggle}
+                  onSelectOrg={handleSelectOrg}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// 根据组织ID获取组织下的所有用户（包括子组织）
+function getUsersFromOrgById(orgId: string): OrgNode[] {
+  const findOrgAndGetUsers = (nodes: OrgNode[]): OrgNode[] => {
+    for (const node of nodes) {
+      if (node.id === orgId && node.type === 'org') {
+        return getUsersFromOrg(node)
+      }
+      if (node.children) {
+        const result = findOrgAndGetUsers(node.children)
+        if (result.length > 0 || node.children.some(c => c.id === orgId)) {
+          const found = node.children.find(c => c.id === orgId)
+          if (found && found.type === 'org') {
+            return getUsersFromOrg(found)
+          }
+          return result
+        }
+      }
+    }
+    return []
+  }
+  return findOrgAndGetUsers(orgTree)
+}
+
+// 用户选择器组件
+function UserSelect({
+  value,
+  displayName,
+  orgId,
+  onChange,
+}: {
+  value: string
+  displayName: string
+  orgId: string
+  onChange: (userId: string, userName: string) => void
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [searchKeyword, setSearchKeyword] = useState('')
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const handleSelectUser = (userId: string, userName: string) => {
     onChange(userId, userName)
     setIsOpen(false)
-    setOrgSearchKeyword('')
-    setUserSearchKeyword('')
-    setSelectedOrg(null)
+    setSearchKeyword('')
   }
 
-  // 过滤组织树
-  const filteredOrgTree = filterOrgTreeByKeyword(orgTree, orgSearchKeyword)
-
   // 获取选中组织下的用户
-  const usersInOrg = selectedOrg ? getUsersFromOrg(selectedOrg) : []
+  const usersInOrg = orgId ? getUsersFromOrgById(orgId) : []
 
   // 过滤用户列表
-  const filteredUsers = userSearchKeyword.trim()
-    ? usersInOrg.filter(user => user.name.toLowerCase().includes(userSearchKeyword.toLowerCase()))
+  const filteredUsers = searchKeyword.trim()
+    ? usersInOrg.filter(user => user.name.toLowerCase().includes(searchKeyword.toLowerCase()))
     : usersInOrg
 
-  return (
-    <div className="user-tree-select" ref={containerRef}>
-      <div className="user-tree-select-input" onClick={() => setIsOpen(!isOpen)}>
-        <span className={displayName ? '' : 'placeholder'}>
-          {displayName || '-- Select User --'}
-        </span>
-        <CaretDownOutlined className="user-tree-select-arrow" />
-      </div>
-      {isOpen && (
-        <div className="user-tree-select-dropdown">
-          <div className="user-select-panels">
-            {/* 左侧：组织树 */}
-            <div className="user-select-panel org-panel">
-              <div className="panel-header">Organizations</div>
-              <div className="panel-search">
-                <SearchOutlined className="panel-search-icon" />
-                <input
-                  type="text"
-                  className="panel-search-input"
-                  placeholder="Search organization..."
-                  value={orgSearchKeyword}
-                  onChange={(e) => setOrgSearchKeyword(e.target.value)}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </div>
-              <div className="panel-content">
-                {filteredOrgTree.length === 0 ? (
-                  <div className="panel-empty">No organizations found</div>
-                ) : (
-                  filteredOrgTree.map((node) => (
-                    <OrgTreeNode
-                      key={node.id}
-                      node={node}
-                      level={0}
-                      expandedNodes={expandedNodes}
-                      selectedOrgId={selectedOrg?.id || ''}
-                      onToggle={handleToggle}
-                      onSelectOrg={handleSelectOrg}
-                    />
-                  ))
-                )}
-              </div>
-            </div>
+  const isDisabled = !orgId
 
-            {/* 右侧：用户列表 */}
-            <div className="user-select-panel user-panel">
-              <div className="panel-header">Users</div>
-              <div className="panel-search">
-                <SearchOutlined className="panel-search-icon" />
-                <input
-                  type="text"
-                  className="panel-search-input"
-                  placeholder="Search user..."
-                  value={userSearchKeyword}
-                  onChange={(e) => setUserSearchKeyword(e.target.value)}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </div>
-              <div className="panel-content">
-                {!selectedOrg ? (
-                  <div className="panel-empty">Select an organization first</div>
-                ) : filteredUsers.length === 0 ? (
-                  <div className="panel-empty">No users found</div>
-                ) : (
-                  filteredUsers.map((user) => (
-                    <div
-                      key={user.id}
-                      className="user-list-item"
-                      onClick={() => handleSelectUser(user.id, user.name)}
-                    >
-                      <UserOutlined className="user-list-icon" />
-                      <span className="user-list-name">{user.name}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
+  return (
+    <div className="user-select" ref={containerRef}>
+      <div
+        className={`user-select-input ${isDisabled ? 'disabled' : ''}`}
+        onClick={() => !isDisabled && setIsOpen(!isOpen)}
+      >
+        <span className={displayName ? '' : 'placeholder'}>
+          {isDisabled ? '-- Select organization first --' : (displayName || '-- Select User --')}
+        </span>
+        <CaretDownOutlined className="user-select-arrow" />
+      </div>
+      {isOpen && !isDisabled && (
+        <div className="user-select-dropdown">
+          <div className="user-select-search">
+            <SearchOutlined className="user-select-search-icon" />
+            <input
+              type="text"
+              className="user-select-search-input"
+              placeholder="Search user..."
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+          <div className="user-select-content">
+            {filteredUsers.length === 0 ? (
+              <div className="user-select-empty">No users found</div>
+            ) : (
+              filteredUsers.map((user) => (
+                <div
+                  key={user.id}
+                  className={`user-select-item ${value === user.id ? 'selected' : ''}`}
+                  onClick={() => handleSelectUser(user.id, user.name)}
+                >
+                  <UserOutlined className="user-select-item-icon" />
+                  <span className="user-select-item-name">{user.name}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
@@ -515,6 +571,8 @@ function SecurityContent() {
   const handleAdd = () => {
     const newAuth: Authorization = {
       id: Date.now().toString(),
+      orgId: '',
+      orgName: '',
       userId: '',
       userName: '',
       createTask: false,
@@ -524,6 +582,16 @@ function SecurityContent() {
 
   const handleDelete = (id: string) => {
     setAuthorizations(authorizations.filter((auth) => auth.id !== id))
+  }
+
+  const handleOrgChange = (id: string, orgId: string, orgName: string) => {
+    setAuthorizations(
+      authorizations.map((auth) =>
+        auth.id === id
+          ? { ...auth, orgId, orgName, userId: '', userName: '' }  // 组织改变时清空用户选择
+          : auth
+      )
+    )
   }
 
   const handleUserChange = (id: string, userId: string, userName: string) => {
@@ -548,7 +616,8 @@ function SecurityContent() {
       <table className="security-authorization-table">
         <thead>
           <tr>
-            <th>Delegate To</th>
+            <th>Organization</th>
+            <th>User</th>
             <th>Operations</th>
             <th></th>
           </tr>
@@ -556,7 +625,7 @@ function SecurityContent() {
         <tbody>
           {authorizations.length === 0 ? (
             <tr>
-              <td colSpan={3} className="security-table-empty">
+              <td colSpan={4} className="security-table-empty">
                 No delegation records. Click "Add Delegation" to add.
               </td>
             </tr>
@@ -564,9 +633,17 @@ function SecurityContent() {
             authorizations.map((auth) => (
               <tr key={auth.id}>
                 <td>
-                  <UserTreeSelect
+                  <OrganizationSelect
+                    value={auth.orgId}
+                    displayName={auth.orgName}
+                    onChange={(orgId, orgName) => handleOrgChange(auth.id, orgId, orgName)}
+                  />
+                </td>
+                <td>
+                  <UserSelect
                     value={auth.userId}
                     displayName={auth.userName}
+                    orgId={auth.orgId}
                     onChange={(userId, userName) => handleUserChange(auth.id, userId, userName)}
                   />
                 </td>

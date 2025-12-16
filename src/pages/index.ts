@@ -4,3 +4,5 @@ export { JsonDataSourceDialogDesign2 } from './Data/DataSource/JsonDataSourceDia
 export { Security } from './Configuration/Scheduling/Security'
 export { Task } from './Configuration/Scheduling/Task'
 export { AddTask } from './Configuration/Scheduling/AddTask'
+export { TasksCard } from './Configuration/Scheduling/TasksCard'
+export { TaskManagement } from './Configuration/Scheduling/TaskManagement'

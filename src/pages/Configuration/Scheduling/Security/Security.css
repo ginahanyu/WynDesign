@@ -140,12 +140,18 @@
 
 .security-authorization-table th:first-child,
 .security-authorization-table td:first-child {
-  width: 50%;
+  width: 25%;
   overflow: visible;
 }
 
 .security-authorization-table th:nth-child(2),
 .security-authorization-table td:nth-child(2) {
+  width: 25%;
+  overflow: visible;
+}
+
+.security-authorization-table th:nth-child(3),
+.security-authorization-table td:nth-child(3) {
   width: calc(50% - 50px);
 }
 
@@ -470,4 +476,217 @@
 .security-info-tooltip:hover .security-tooltip-content {
   visibility: visible;
   opacity: 1;
+}
+
+/* Organization Select */
+.org-select {
+  position: relative;
+  width: 100%;
+  height: 36px;
+}
+
+.org-select-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  box-sizing: border-box;
+  height: 36px;
+}
+
+.org-select-input:hover {
+  border-color: #b0b0b0;
+}
+
+.org-select-input .placeholder {
+  color: #999;
+}
+
+.org-select-arrow {
+  color: #999;
+  font-size: 12px;
+}
+
+.org-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 300px;
+  margin-top: 4px;
+  background-color: #fff;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+}
+
+.org-select-search {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.org-select-search-icon {
+  color: #999;
+  margin-right: 8px;
+  font-size: 12px;
+}
+
+.org-select-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  color: #333;
+  background: transparent;
+}
+
+.org-select-search-input::placeholder {
+  color: #999;
+}
+
+.org-select-content {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.org-select-empty {
+  padding: 20px 12px;
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+}
+
+/* User Select */
+.user-select {
+  position: relative;
+  width: 100%;
+  height: 36px;
+}
+
+.user-select-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  box-sizing: border-box;
+  height: 36px;
+}
+
+.user-select-input:hover {
+  border-color: #b0b0b0;
+}
+
+.user-select-input.disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  color: #999;
+}
+
+.user-select-input.disabled:hover {
+  border-color: #d0d0d0;
+}
+
+.user-select-input .placeholder {
+  color: #999;
+}
+
+.user-select-arrow {
+  color: #999;
+  font-size: 12px;
+}
+
+.user-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 250px;
+  margin-top: 4px;
+  background-color: #fff;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+}
+
+.user-select-search {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.user-select-search-icon {
+  color: #999;
+  margin-right: 8px;
+  font-size: 12px;
+}
+
+.user-select-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  color: #333;
+  background: transparent;
+}
+
+.user-select-search-input::placeholder {
+  color: #999;
+}
+
+.user-select-content {
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.user-select-empty {
+  padding: 20px 12px;
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+}
+
+.user-select-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.user-select-item:hover {
+  background-color: #f5f5f5;
+}
+
+.user-select-item.selected {
+  background-color: #e6f7ff;
+}
+
+.user-select-item-icon {
+  margin-right: 8px;
+  color: #666;
+  font-size: 12px;
+}
+
+.user-select-item-name {
+  font-size: 12px;
+  color: #333;
 }

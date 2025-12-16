@@ -108,7 +108,7 @@ function OwnerSelect({
             {displayName}
           </span>
         ) : (
-          <span className="owner-select-text">Select owner</span>
+          <span className="owner-select-text">Select user</span>
         )}
         <div className="owner-select-icons">
           {value && (
@@ -396,7 +396,7 @@ export function Task() {
                 </div>
 
                 <div className="task-panel-field">
-                  <label className="task-panel-label">Owner</label>
+                  <label className="task-panel-label">Run As</label>
                   <OwnerSelect
                     value={ownerId}
                     displayName={ownerName}
