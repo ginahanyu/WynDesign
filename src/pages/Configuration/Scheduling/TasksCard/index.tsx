@@ -6,6 +6,7 @@ import {
 } from '@ant-design/icons'
 import './TasksCard.css'
 import schedularIcon from '@/resource/schedular.png'
+import schedularIcon2 from '@/resource/schedular2.png'
 
 // Document card data
 interface DocumentCard {
@@ -137,10 +138,10 @@ export function TasksCard() {
                   </button>
                 </div>
                 <div className="tasks-card-task-list">
-                  {mockTasks.map((task) => (
+                  {mockTasks.map((task, index) => (
                     <div key={task.id} className="tasks-card-task-item">
                       <div className="tasks-card-task-icon">
-                        <img src={schedularIcon} alt="schedule" width="24" height="24" />
+                        <img src={index === 1 ? schedularIcon2 : schedularIcon} alt="schedule" width="24" height="24" />
                       </div>
                       <div className="tasks-card-task-info">
                         <span className="tasks-card-task-name">{task.name}</span>
