@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { MainLayout } from '@/components/Layout'
-import { Dashboard, JsonDataSourceDialogDesign, JsonDataSourceDialogDesign2, Security, Task, AddTask, TasksCard, TaskManagement } from '@/pages'
+import { Dashboard, JsonDataSourceDialogDesign, JsonDataSourceDialogDesign2, DataFlow, PushDataSet, CachedDataSet, CachedModel, Security, Task, AddTask, TasksCard, TaskManagement } from '@/pages'
 
 export function AppRoutes() {
   return (
@@ -12,6 +12,12 @@ export function AppRoutes() {
             <Route path="json-datasource-dialog-design" element={<JsonDataSourceDialogDesign />} />
             <Route path="json-datasource-dialog-design2" element={<JsonDataSourceDialogDesign2 />} />
           </Route>
+        </Route>
+        <Route path="data-warehouse">
+          <Route path="data-flow" element={<DataFlow />} />
+          <Route path="push-data-set" element={<PushDataSet />} />
+          <Route path="cached-data-set" element={<CachedDataSet />} />
+          <Route path="cached-model" element={<CachedModel />} />
         </Route>
         <Route path="configuration">
           <Route path="scheduling">

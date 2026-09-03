@@ -19,6 +19,32 @@ export const menuConfig: MenuItem[] = [
     ],
   },
   {
+    key: 'data-warehouse',
+    label: 'DataWarehouse',
+    children: [
+      {
+        key: 'data-flow',
+        label: 'DataFlow',
+        path: '/data-warehouse/data-flow',
+      },
+      {
+        key: 'cached-model',
+        label: 'CachedModel',
+        path: '/data-warehouse/cached-model',
+      },
+      {
+        key: 'cached-data-set',
+        label: 'CachedDataSet',
+        path: '/data-warehouse/cached-data-set',
+      },
+      {
+        key: 'push-data-set',
+        label: 'Push DataSet',
+        path: '/data-warehouse/push-data-set',
+      },
+    ],
+  },
+  {
     key: 'configuration',
     label: 'Configuration',
     children: [
